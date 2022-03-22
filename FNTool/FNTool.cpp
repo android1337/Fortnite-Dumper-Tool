@@ -79,9 +79,10 @@ bool FNTool::Initialize(const char* GObjects_Signature, const char* GetNameByInd
 {
 
 	uintptr_t GObjects = (uintptr_t)MemoryHelper::Pattern::PatternScan(GObjects_Signature); if (!GObjects) MessageBoxA(0, "Failed To Find UObjects", "Error", MB_ICONERROR);
-	GObjects = reinterpret_cast<uintptr_t>(RELATIVE(GObjects, 7));
+	GObjects = RELATIVE(GObjects, 7);
 	uintptr_t GetNameByIndex = (uintptr_t)MemoryHelper::Pattern::PatternScan(GetNameByIndex_Signature); if (!GetNameByIndex) MessageBoxA(0, "Failed To Find GetNameByIndex", "Error", MB_ICONERROR);
 	uintptr_t FnFree = (uintptr_t)MemoryHelper::Pattern::PatternScan(FnFree_Signature); if (!FnFree) MessageBoxA(0, "Failed To Find FnFree", "Error", MB_ICONERROR);
+	FnFree = RELATIVE(FnFree, 5);
 
 	if (!GObjects || !GetNameByIndex || !FnFree) return false;
 
@@ -169,7 +170,7 @@ DWORD FNTool::FindOffset(const char* Class, const char* varName)
 				if (!spoof_call(game_rbx_jmp, IsBadWritePtr, (LPVOID)Type, (UINT_PTR)8) && Type)
 				{
 					auto Property_FName = *(FName*)(Property + 0x28);
-					auto Offset = *(DWORD*)(Property + 0x4C);
+					auto Offset = *(DWORD*)(Property + 0x44);
 
 					if (Offset != 0)
 					{
@@ -216,7 +217,7 @@ VOID FNTool::FindAndLogClass(const char* Class)
 				if (!IsBadWritePtr((LPVOID)Type, 8) && Type)
 				{
 					auto Property_FName = *(FName*)(Property + 0x28);
-					auto Offset = *(DWORD*)(Property + 0x4C);
+					auto Offset = *(DWORD*)(Property + 0x44);
 
 					if (Offset != 0)
 					{
