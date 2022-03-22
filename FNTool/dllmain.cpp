@@ -54,30 +54,27 @@ VOID FindMainOffsets(FNTool* FN) {
 	//Get the addresses
 	uintptr_t BaseAddress = (uintptr_t)GetModuleHandle(0);
 	uintptr_t UWorld = FN->FindSignature("48 89 05 ? ? ? ? 48 8B 4B 78"); //ok
-	uintptr_t UObject = FN->FindSignature("48 8B 05 ? ? ? ? 48 8B 0C C8 48 8B 04 D1"); //ok
-	uintptr_t Free = FN->FindSignature("48 85 C9 0F 84 ? ? ? ? 53 48 83 EC 20 48 89 7C 24 30 48 8B D9 48 8B 3D ? ? ? ? 48 85 FF 0F 84 ? ? ? ? 48 8B 07 4C 8B 40 30 48 8D 05 ? ? ? ? 4C 3B C0"); //ok
-	uintptr_t WorldToScreen = FN->FindSignature("E8 ? ? ? ? 48 8B 5C 24 ? 41 88 07 48 83 C4 30"); //ok
-	uintptr_t GetNameByIndex = FN->FindSignature("48 89 5C 24 ? 48 89 6C 24 ? 56 57 41 56 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 48 8B F2 4C 8B F1 E8 ? ? ? ? 45 8B 06 33 ED 41 0F B7 16 41 C1 E8 10 89 54 24 24 44 89 44 24 ? 48 8B 4C 24 ? 48 C1 E9 20 8D 3C 09 4A 03 7C C0 ? 0F B7 17 C1 EA 06 41 39 6E 04"); //ok
+	uintptr_t GObject = FN->FindSignature("48 8B 05 ? ? ? ? 48 8B 0C C8 48 8B 04 D1"); //ok
+	uintptr_t Free = FN->FindSignature("E8 ? ? ? ? 48 8B 4C 24 ? 48 85 C9 0F 84 ? ? ? ? E8 ? ? ? ? 90 E9 ? ? ? ? 48 8D 15 ? ? ? ? 83 CB 08 4C 8B"); //ok
+	uintptr_t GetNameByIndex = FN->FindSignature("48 89 5C 24 ? 48 89 74 24 ? 48 89 7C 24 ? 41 56 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 8B 01 4C 8B F2"); //ok
 
 
 	//Resolve Relative Addresses
 	UWorld = RELATIVE(UWorld, 7);
-	UObject = RELATIVE(UObject, 7);
-	WorldToScreen = RELATIVE(WorldToScreen, 5);
+	GObject = RELATIVE(GObject, 7);
+	Free = RELATIVE(Free, 5);
 
 	//Subtract the image base
 	UWorld -= BaseAddress;
-	UObject -= BaseAddress;
+	GObject -= BaseAddress;
 	Free -= BaseAddress;
-	WorldToScreen -= BaseAddress;
 	GetNameByIndex -= BaseAddress;
 
 	//Print them
 	std::cout << "  [BaseAddress] 0x" << BaseAddress << "\n";
 	std::cout << "  [UWorld] 0x" << UWorld << "\n";
-	std::cout << "  [UObject] 0x" << UObject << "\n";
+	std::cout << "  [GObject] 0x" << GObject << "\n";
 	std::cout << "  [Free] 0x" << Free << "\n";
-	std::cout << "  [WorldToScreen] 0x" << WorldToScreen << "\n";
 	std::cout << "  [GetNameByIndex] 0x" << GetNameByIndex << "\n";
 }
 
@@ -94,8 +91,8 @@ VOID Main()
 	
 
 	const char* GObjects_Signature = "48 8B 05 ? ? ? ? 48 8B 0C C8 48 8B 04 D1";
-	const char* GetNameByIndex_Signature = "48 89 5C 24 ? 48 89 6C 24 ? 56 57 41 56 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 48 8B F2 4C 8B F1 E8 ? ? ? ? 45 8B 06 33 ED 41 0F B7 16 41 C1 E8 10 89 54 24 24 44 89 44 24 ? 48 8B 4C 24 ? 48 C1 E9 20 8D 3C 09 4A 03 7C C0 ? 0F B7 17 C1 EA 06 41 39 6E 04";
-	const char* FnFree_Signature = "48 85 C9 0F 84 ? ? ? ? 53 48 83 EC 20 48 89 7C 24 30 48 8B D9 48 8B 3D ? ? ? ? 48 85 FF 0F 84 ? ? ? ? 48 8B 07 4C 8B 40 30 48 8D 05 ? ? ? ? 4C 3B C0";
+	const char* GetNameByIndex_Signature = "48 89 5C 24 ? 48 89 74 24 ? 48 89 7C 24 ? 41 56 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 8B 01 4C 8B F2";
+	const char* FnFree_Signature = "E8 ? ? ? ? 48 8B 4C 24 ? 48 85 C9 0F 84 ? ? ? ? E8 ? ? ? ? 90 E9 ? ? ? ? 48 8D 15 ? ? ? ? 83 CB 08 4C 8B";
 
 	//Initialize the tool
 	FNTool* FN = new FNTool();
